@@ -1,0 +1,28 @@
+From 627bd89b45ba09b689e692a23370e5d82d9829a1 Mon Sep 17 00:00:00 2001
+From: Remi Collet <remi@remirepo.net>
+Date: Thu, 8 Feb 2018 05:47:28 +0100
+Subject: [PATCH] skip online test
+
+---
+ tests/RedisTest.php | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/tests/RedisTest.php b/tests/RedisTest.php
+index 4c0b7884..4d807a78 100644
+--- a/tests/RedisTest.php
++++ b/tests/RedisTest.php
+@@ -5164,9 +5164,13 @@ public function testMultipleConnect() {
+     }
+ 
+     public function testConnectException() {
++        $host = 'github.com';
++        if (gethostbyname($host) === $host) {
++            return $this->markTestSkipped('online test');
++        }
+         $redis = new Redis();
+         try {
+-            $redis->connect('github.com', 6379, 0.01);
++            $redis->connect($host, 6379, 0.01);
+         }  catch (Exception $e) {
+             $this->assertTrue(strpos($e, "timed out") !== false);
+         }
