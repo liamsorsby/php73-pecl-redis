@@ -19,18 +19,17 @@
 # after 40-igbinary
 %global ini_name    50-%{pecl_name}.ini
 %global upstream_version 4.0.0
-%global upstream_prever  RC1
+%global upstream_prever  RC2
 
 Summary:       Extension for communicating with the Redis key-value store
 Name:          php-pecl-redis4
 Version:       %{upstream_version}%{?upstream_prever:~%{upstream_prever}}
-Release:       4%{?dist}
+Release:       1%{?dist}
 Source0:       http://pecl.php.net/get/%{pecl_name}-%{upstream_version}%{?upstream_prever}.tgz
 License:       PHP
 URL:           http://pecl.php.net/package/redis
 
-Patch0:        %{pecl_name}-tests.patch
-
+BuildRequires: gcc
 BuildRequires: php-devel
 BuildRequires: php-pear
 BuildRequires: php-pecl-igbinary-devel
@@ -81,8 +80,6 @@ sed -e 's/role="test"/role="src"/' \
     -i package.xml
 
 cd NTS
-%patch0 -p1 -b .pr
-
 # Use system library
 rm -r liblzf
 
@@ -250,6 +247,9 @@ exit $ret
 
 
 %changelog
+* Sat Mar  3 2018 Remi Collet <remi@remirepo.net> - 4.0.0~RC2-1
+- update to 4.0.0RC2
+
 * Wed Feb  7 2018 Remi Collet <remi@remirepo.net> - 4.0.0~RC1-4
 - re-enable s390x build (was a temporary failure)
 
