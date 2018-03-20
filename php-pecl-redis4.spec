@@ -19,7 +19,7 @@
 # after 40-igbinary
 %global ini_name    50-%{pecl_name}.ini
 %global upstream_version 4.0.0
-%global upstream_prever  RC2
+#global upstream_prever  RC2
 
 Summary:       Extension for communicating with the Redis key-value store
 Name:          php-pecl-redis4
@@ -49,7 +49,7 @@ Provides:      php-%{pecl_name}%{?_isa}       = %{version}
 Provides:      php-pecl(%{pecl_name})         = %{version}
 Provides:      php-pecl(%{pecl_name})%{?_isa} = %{version}
 
-%if 0%{?fedora} >= 29
+%if 0%{?fedora} >= 29 || 0%{?rhel} >= 8
 Obsoletes:     php-pecl-%{pecl_name} < 4
 Provides:      php-pecl-%{pecl_name}          = %{version}-%{release}
 Provides:      php-pecl-%{pecl_name}%{?_isa}  = %{version}-%{release}
@@ -247,6 +247,9 @@ exit $ret
 
 
 %changelog
+* Mon Mar 19 2018 Remi Collet <remi@remirepo.net> - 4.0.0-1
+- update to 4.0.0 (stable)
+
 * Sat Mar  3 2018 Remi Collet <remi@remirepo.net> - 4.0.0~RC2-1
 - update to 4.0.0RC2
 
