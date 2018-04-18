@@ -18,7 +18,7 @@
 %global with_tests  0%{!?_without_tests:1}
 # after 40-igbinary
 %global ini_name    50-%{pecl_name}.ini
-%global upstream_version 4.0.0
+%global upstream_version 4.0.1
 #global upstream_prever  RC2
 
 Summary:       Extension for communicating with the Redis key-value store
@@ -247,6 +247,9 @@ exit $ret
 
 
 %changelog
+* Wed Apr 18 2018 Remi Collet <remi@remirepo.net> - 4.0.1-1
+- update to 4.0.1
+
 * Mon Mar 19 2018 Remi Collet <remi@remirepo.net> - 4.0.0-1
 - update to 4.0.0 (stable)
 
