@@ -18,7 +18,7 @@
 %global with_tests  0%{!?_without_tests:1}
 # after 40-igbinary
 %global ini_name    50-%{pecl_name}.ini
-%global upstream_version 4.0.2
+%global upstream_version 4.1.0
 #global upstream_prever  RC2
 
 Summary:       Extension for communicating with the Redis key-value store
@@ -128,6 +128,10 @@ extension = %{pecl_name}.so
 ;redis.clusters.read_timeout = ''
 ;redis.clusters.seeds = ''
 ;redis.clusters.timeout = ''
+;redis.session.locking_enabled = ''
+;redis.session.lock_expire = ''
+;redis.session.lock_retries = ''
+;redis.session.lock_wait_time = ''
 EOF
 
 
@@ -211,14 +215,15 @@ port=$(%{__php} -r 'echo 9000 + PHP_MAJOR_VERSION*100 + PHP_MINOR_VERSION*10 + P
     --dir       $PWD/data      \
     --pidfile   $pidfile
 
-sed -e "s/6379/$port/" -i RedisTest.php
+sed -e "s/6379/$port/" -i *.php
 
 # Run the test Suite
 ret=0
-%{__php} --no-php-ini \
+export TEST_PHP_EXECUTABLE=%{__php}
+export TEST_PHP_ARGS="--no-php-ini \
     --define extension=igbinary.so \
-    --define extension=%{buildroot}%{php_extdir}/%{pecl_name}.so \
-    TestRedis.php || ret=1
+    --define extension=%{buildroot}%{php_extdir}/%{pecl_name}.so"
+$TEST_PHP_EXECUTABLE $TEST_PHP_ARGS TestRedis.php || ret=1
 
 # Cleanup
 if [ -f $pidfile ]; then
@@ -247,6 +252,10 @@ exit $ret
 
 
 %changelog
+* Tue Jul 10 2018 Remi Collet <remi@remirepo.net> - 4.1.0-1
+- update to 4.1.0 (stable)
+- add new redis.session.lock* options in provided configuration
+
 * Wed Apr 25 2018 Remi Collet <remi@remirepo.net> - 4.0.2-1
 - update to 4.0.2
 
