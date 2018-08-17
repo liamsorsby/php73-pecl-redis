@@ -18,13 +18,13 @@
 %global with_tests  0%{!?_without_tests:1}
 # after 40-igbinary
 %global ini_name    50-%{pecl_name}.ini
-%global upstream_version 4.1.0
+%global upstream_version 4.1.1
 #global upstream_prever  RC2
 
 Summary:       Extension for communicating with the Redis key-value store
 Name:          php-pecl-redis4
 Version:       %{upstream_version}%{?upstream_prever:~%{upstream_prever}}
-Release:       2%{?dist}
+Release:       1%{?dist}
 Source0:       http://pecl.php.net/get/%{pecl_name}-%{upstream_version}%{?upstream_prever}.tgz
 License:       PHP
 URL:           http://pecl.php.net/package/redis
@@ -252,6 +252,9 @@ exit $ret
 
 
 %changelog
+* Fri Aug 17 2018 Remi Collet <remi@remirepo.net> - 4.1.1-1
+- update to 4.1.1 (stable)
+
 * Fri Jul 13 2018 Fedora Release Engineering <releng@fedoraproject.org> - 4.1.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
