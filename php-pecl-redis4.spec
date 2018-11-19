@@ -15,7 +15,11 @@
 
 %global pecl_name   redis
 %global with_zts    0%{!?_without_zts:%{?__ztsphp:1}}
+%ifarch s390x
+%global with_tests  0%{?_with_tests:1}
+%else
 %global with_tests  0%{!?_without_tests:1}
+%endif
 # after 40-igbinary
 %global ini_name    50-%{pecl_name}.ini
 %global upstream_version 4.2.0
@@ -254,6 +258,7 @@ exit $ret
 %changelog
 * Sun Nov 18 2018 Remi Collet <remi@remirepo.net> - 4.2.0-1
 - update to 4.2.0 (stable)
+- temporarily disable test suite on s390x
 
 * Thu Oct 11 2018 Remi Collet <remi@remirepo.net> - 4.1.1-2
 - Rebuild for https://fedoraproject.org/wiki/Changes/php73
