@@ -28,7 +28,7 @@
 Summary:       Extension for communicating with the Redis key-value store
 Name:          php-pecl-redis4
 Version:       %{upstream_version}
-Release:       1%{?dist}
+Release:       2%{?dist}
 Source0:       http://pecl.php.net/get/%{pecl_name}-%{upstream_version}%{?upstream_prever}.tgz
 License:       PHP
 URL:           http://pecl.php.net/package/redis
@@ -256,6 +256,9 @@ exit $ret
 
 
 %changelog
+* Sat Feb 02 2019 Fedora Release Engineering <releng@fedoraproject.org> - 4.2.0-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
 * Sun Nov 18 2018 Remi Collet <remi@remirepo.net> - 4.2.0-1
 - update to 4.2.0 (stable)
 - temporarily disable test suite on s390x
