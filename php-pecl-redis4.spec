@@ -3,7 +3,7 @@
 #
 # remirepo spec file for php-pecl-redis4
 #
-# Copyright (c) 2012-2018 Remi Collet
+# Copyright (c) 2012-2019 Remi Collet
 # License: CC-BY-SA
 # http://creativecommons.org/licenses/by-sa/4.0/
 #
@@ -32,6 +32,8 @@ Release:       2%{?dist}
 Source0:       http://pecl.php.net/get/%{pecl_name}-%{upstream_version}%{?upstream_prever}.tgz
 License:       PHP
 URL:           http://pecl.php.net/package/redis
+
+Patch0:        https://github.com/phpredis/phpredis/commit/7b8b7b01a2b2af2e646ca89802910ac216c476dc.patch
 
 BuildRequires: gcc
 BuildRequires: php-devel
@@ -84,6 +86,8 @@ sed -e 's/role="test"/role="src"/' \
     -i package.xml
 
 cd NTS
+%patch0 -p1
+
 # Use system library
 rm -r liblzf
 
@@ -256,6 +260,10 @@ exit $ret
 
 
 %changelog
+* Mon Feb  4 2019 Remi Collet <remi@remirepo.net> - 4.2.0-2
+- add upstream patch to fix FTBFS with recent redis version
+  reported as https://github.com/phpredis/phpredis/issues/1472
+
 * Sat Feb 02 2019 Fedora Release Engineering <releng@fedoraproject.org> - 4.2.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
