@@ -33,8 +33,6 @@ Source0:       http://pecl.php.net/get/%{pecl_name}-%{upstream_version}%{?upstre
 License:       PHP
 URL:           http://pecl.php.net/package/redis
 
-Patch0:        https://github.com/phpredis/phpredis/commit/7b8b7b01a2b2af2e646ca89802910ac216c476dc.patch
-
 BuildRequires: gcc
 BuildRequires: php-devel
 BuildRequires: php-pear
@@ -86,8 +84,6 @@ sed -e 's/role="test"/role="src"/' \
     -i package.xml
 
 cd NTS
-%patch0 -p1
-
 # Use system library
 rm -r liblzf
 
