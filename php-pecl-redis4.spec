@@ -120,6 +120,8 @@ extension = %{pecl_name}.so
 ;session.save_path = "tcp://host1:6379?weight=1, tcp://host2:6379?weight=2&timeout=2.5, tcp://host3:6379?weight=2"
 
 ; Configuration
+;redis.arrays.algorithm = ''
+;redis.arrays.auth = ''
 ;redis.arrays.autorehash = 0
 ;redis.arrays.connecttimeout = 0
 ;redis.arrays.distributor = ''
@@ -132,10 +134,14 @@ extension = %{pecl_name}.so
 ;redis.arrays.previous = ''
 ;redis.arrays.readtimeout = 0
 ;redis.arrays.retryinterval = 0
+;redis.arrays.consistent = 0
+;redis.clusters.auth = 0
 ;redis.clusters.persistent = 0
 ;redis.clusters.read_timeout = 0
 ;redis.clusters.seeds = ''
 ;redis.clusters.timeout = 0
+;redis.pconnect.pooling_enabled = 0
+;redis.pconnect.connection_limit = 0
 ;redis.session.locking_enabled = 0
 ;redis.session.lock_expire = 0
 ;redis.session.lock_retries = 10
