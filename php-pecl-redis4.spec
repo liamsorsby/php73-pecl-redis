@@ -22,13 +22,13 @@
 %endif
 # after 40-igbinary
 %global ini_name    50-%{pecl_name}.ini
-%global upstream_version 4.2.0
+%global upstream_version 4.3.0
 #global upstream_prever  RC2
 
 Summary:       Extension for communicating with the Redis key-value store
 Name:          php-pecl-redis4
 Version:       %{upstream_version}
-Release:       2%{?dist}
+Release:       1%{?dist}
 Source0:       http://pecl.php.net/get/%{pecl_name}-%{upstream_version}%{?upstream_prever}.tgz
 License:       PHP
 URL:           http://pecl.php.net/package/redis
@@ -260,6 +260,9 @@ exit $ret
 
 
 %changelog
+* Thu Mar 14 2019 Remi Collet <remi@remirepo.net> - 4.3.0-1
+- update to 4.3.0 (stable)
+
 * Mon Feb  4 2019 Remi Collet <remi@remirepo.net> - 4.2.0-2
 - add upstream patch to fix FTBFS with recent redis version
   reported as https://github.com/phpredis/phpredis/issues/1472
