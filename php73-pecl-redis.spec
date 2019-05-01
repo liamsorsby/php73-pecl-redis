@@ -1,3 +1,5 @@
+# IUS spec file for php73-pecl-redis, forked from:
+#
 # Fedora spec file for php-pecl-redis4
 # without SCL compatibility from:
 #
@@ -22,21 +24,20 @@
 %endif
 # after 40-igbinary
 %global ini_name    50-%{pecl_name}.ini
-%global upstream_version 4.3.0
-#global upstream_prever  RC2
+%global php         php73
 
 Summary:       Extension for communicating with the Redis key-value store
-Name:          php-pecl-redis4
-Version:       %{upstream_version}
-Release:       1%{?dist}
-Source0:       http://pecl.php.net/get/%{pecl_name}-%{upstream_version}%{?upstream_prever}.tgz
+Name:          %{php}-pecl-%{pecl_name}
+Version:       4.3.0
+Release:       2%{?dist}
+Source0:       https://pecl.php.net/get/%{pecl_name}-%{version}.tgz
 License:       PHP
-URL:           http://pecl.php.net/package/redis
+URL:           https://pecl.php.net/package/%{pecl_name}
 
 BuildRequires: gcc
-BuildRequires: php-devel
-BuildRequires: php-pear
-BuildRequires: php-pecl-igbinary-devel
+BuildRequires: %{php}-devel
+BuildRequires: pear1
+BuildRequires: %{php}-pecl-igbinary-devel
 BuildRequires: liblzf-devel
 # to run Test suite
 %if %{with_tests}
@@ -47,20 +48,15 @@ Requires:      php(zend-abi) = %{php_zend_api}
 Requires:      php(api) = %{php_core_api}
 Requires:      php-pecl(igbinary)%{?_isa}
 
-Obsoletes:     php-%{pecl_name}               < 3
 Provides:      php-%{pecl_name}               = %{version}
 Provides:      php-%{pecl_name}%{?_isa}       = %{version}
 Provides:      php-pecl(%{pecl_name})         = %{version}
 Provides:      php-pecl(%{pecl_name})%{?_isa} = %{version}
 
-%if 0%{?fedora} >= 29 || 0%{?rhel} >= 8
-Obsoletes:     php-pecl-%{pecl_name}          < 4
-Provides:      php-pecl-%{pecl_name}          = %{version}-%{release}
-Provides:      php-pecl-%{pecl_name}%{?_isa}  = %{version}-%{release}
-%else
-# A single version can be installed
-Conflicts:     php-pecl-%{pecl_name} < 4
-%endif
+# safe replacement
+Provides:      php-pecl-%{pecl_name} = %{version}-%{release}
+Provides:      php-pecl-%{pecl_name}%{?_isa} = %{version}-%{release}
+Conflicts:     php-pecl-%{pecl_name} < %{version}-%{release}
 
 
 %description
@@ -75,7 +71,7 @@ some doesn't work with an old redis server version.
 %prep
 %setup -q -c
 # rename source folder
-mv %{pecl_name}-%{upstream_version}%{?upstream_prever} NTS
+mv %{pecl_name}-%{version} NTS
 
 # Don't install/register tests, license, and bundled library
 sed -e 's/role="test"/role="src"/' \
@@ -89,8 +85,8 @@ rm -r liblzf
 
 # Sanity check, really often broken
 extver=$(sed -n '/#define PHP_REDIS_VERSION/{s/.* "//;s/".*$//;p}' php_redis.h)
-if test "x${extver}" != "x%{upstream_version}%{?upstream_prever}"; then
-   : Error: Upstream extension version is ${extver}, expecting %{upstream_version}%{?upstream_prever}.
+if test "x${extver}" != "x%{version}"; then
+   : Error: Upstream extension version is ${extver}, expecting %{version}.
    exit 1
 fi
 cd ..
@@ -105,7 +101,7 @@ cat > %{ini_name} << 'EOF'
 ; Enable %{pecl_name} extension module
 extension = %{pecl_name}.so
 
-; phpredis can be used to store PHP sessions. 
+; phpredis can be used to store PHP sessions.
 ; To do this, uncomment and configure below
 
 ; RPM note : save_handler and save_path are defined
@@ -146,8 +142,6 @@ EOF
 
 
 %build
-%{?dtsenable}
-
 cd NTS
 %{_bindir}/phpize
 %configure \
@@ -157,7 +151,7 @@ cd NTS
     --enable-redis-lzf \
     --with-liblzf \
     --with-php-config=%{_bindir}/php-config
-make %{?_smp_mflags}
+%make_build
 
 %if %{with_zts}
 cd ../ZTS
@@ -169,13 +163,11 @@ cd ../ZTS
     --enable-redis-lzf \
     --with-liblzf \
     --with-php-config=%{_bindir}/zts-php-config
-make %{?_smp_mflags}
+%make_build
 %endif
 
 
 %install
-%{?dtsenable}
-
 # Install the NTS stuff
 make -C NTS install INSTALL_ROOT=%{buildroot}
 install -D -m 644 %{ini_name} %{buildroot}%{php_inidir}/%{ini_name}
@@ -187,7 +179,7 @@ install -D -m 644 %{ini_name} %{buildroot}%{php_ztsinidir}/%{ini_name}
 %endif
 
 # Install the package XML file
-install -D -m 644 package.xml %{buildroot}%{pecl_xmldir}/%{name}.xml
+install -D -m 644 package.xml %{buildroot}%{pecl_xmldir}/%{pecl_name}.xml
 
 # Documentation
 cd NTS
@@ -247,10 +239,28 @@ exit $ret
 %endif
 
 
+%triggerin -- pear1
+if [ -x %{__pecl} ]; then
+    %{pecl_install} %{pecl_xmldir}/%{pecl_name}.xml >/dev/null || :
+fi
+
+
+%posttrans
+if [ -x %{__pecl} ]; then
+    %{pecl_install} %{pecl_xmldir}/%{pecl_name}.xml >/dev/null || :
+fi
+
+
+%postun
+if [ $1 -eq 0 -a -x %{__pecl} ]; then
+    %{pecl_uninstall} %{pecl_name} >/dev/null || :
+fi
+
+
 %files
 %license NTS/COPYING
 %doc %{pecl_docdir}/%{pecl_name}
-%{pecl_xmldir}/%{name}.xml
+%{pecl_xmldir}/%{pecl_name}.xml
 
 %{php_extdir}/%{pecl_name}.so
 %config(noreplace) %{php_inidir}/%{ini_name}
@@ -262,6 +272,9 @@ exit $ret
 
 
 %changelog
+* Wed May  1 2019 Matt Linscott <matt.linscott@gmail.com> - 4.3.0-2
+- Port from Fedora to IUS
+
 * Thu Mar 14 2019 Remi Collet <remi@remirepo.net> - 4.3.0-1
 - update to 4.3.0 (stable)
 
