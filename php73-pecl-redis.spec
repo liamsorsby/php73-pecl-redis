@@ -29,14 +29,15 @@
 Summary:       Extension for communicating with the Redis key-value store
 Name:          %{php}-pecl-%{pecl_name}
 Version:       4.3.0
-Release:       2%{?dist}
+Release:       3%{?dist}
 Source0:       https://pecl.php.net/get/%{pecl_name}-%{version}.tgz
 License:       PHP
 URL:           https://pecl.php.net/package/%{pecl_name}
 
 BuildRequires: gcc
 BuildRequires: %{php}-devel
-BuildRequires: pear1
+# build require pear1's dependencies to avoid mismatched php stacks
+BuildRequires: pear1 %{php}-cli %{php}-common %{php}-xml
 BuildRequires: %{php}-pecl-igbinary-devel
 BuildRequires: liblzf-devel
 # to run Test suite
@@ -272,6 +273,9 @@ fi
 
 
 %changelog
+* Wed Jun 12 2019 Carl George <carl@george.computer> - 4.3.0-3
+- Build require pear1's dependencies to avoid mismatched php stacks
+
 * Wed May  1 2019 Matt Linscott <matt.linscott@gmail.com> - 4.3.0-2
 - Port from Fedora to IUS
 
