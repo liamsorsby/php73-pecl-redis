@@ -47,7 +47,7 @@ BuildRequires: redis >= 3
 
 Requires:      php(zend-abi) = %{php_zend_api}
 Requires:      php(api) = %{php_core_api}
-Requires:      php-pecl(igbinary)%{?_isa}
+Requires:      php73-pecl-igbinary%{?_isa}
 
 Provides:      php-%{pecl_name}               = %{version}
 Provides:      php-%{pecl_name}%{?_isa}       = %{version}
@@ -275,6 +275,7 @@ fi
 %changelog
 * Wed Jun 12 2019 Carl George <carl@george.computer> - 4.3.0-3
 - Build require pear1's dependencies to avoid mismatched php stacks
+- Explicitly require php73-pecl-igbinary to avoid dependency problems
 
 * Wed May  1 2019 Matt Linscott <matt.linscott@gmail.com> - 4.3.0-2
 - Port from Fedora to IUS
