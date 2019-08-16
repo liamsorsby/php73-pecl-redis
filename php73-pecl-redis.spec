@@ -22,6 +22,7 @@
 %else
 %global with_tests  0%{!?_without_tests:1}
 %endif
+%global json_ini    20-%{pecl_name}.ini
 # after 40-igbinary
 %global ini_name    50-%{pecl_name}.ini
 %global php         php73
@@ -36,9 +37,13 @@ URL:           https://pecl.php.net/package/%{pecl_name}
 
 BuildRequires: gcc
 BuildRequires: %{php}-devel
+BuildRequires: %{php}-json
 # build require pear1's dependencies to avoid mismatched php stacks
 BuildRequires: pear1 %{php}-cli %{php}-common %{php}-xml
 BuildRequires: %{php}-pecl-igbinary-devel
+%ifnarch ppc64
+BuildRequires: %{php}-pecl-msgpack-devel >= 2.0.3
+%endif
 BuildRequires: liblzf-devel
 # to run Test suite
 %if %{with_tests}
@@ -47,7 +52,11 @@ BuildRequires: redis >= 3
 
 Requires:      php(zend-abi) = %{php_zend_api}
 Requires:      php(api) = %{php_core_api}
+Requires:      php73-json
 Requires:      php73-pecl-igbinary%{?_isa}
+%ifnarch ppc64
+Requires:      php73-pecl-msgpack%{?_isa}
+%endif
 
 Provides:      php-%{pecl_name}               = %{version}
 Provides:      php-%{pecl_name}%{?_isa}       = %{version}
@@ -97,6 +106,12 @@ cd ..
 cp -pr NTS ZTS
 %endif
 
+# Drop in json configuration
+cat > %{json_ini} << 'EOF'
+; Enable json extension module
+extension = json.so
+EOF
+
 # Drop in the bit of configuration
 cat > %{ini_name} << 'EOF'
 ; Enable %{pecl_name} extension module
@@ -141,7 +156,6 @@ extension = %{pecl_name}.so
 ;redis.session.lock_wait_time = 2000
 EOF
 
-
 %build
 cd NTS
 %{_bindir}/phpize
@@ -149,6 +163,9 @@ cd NTS
     --enable-redis \
     --enable-redis-session \
     --enable-redis-igbinary \
+%ifnarch ppc64
+    --enable-redis-msgpack \
+%endif
     --enable-redis-lzf \
     --with-liblzf \
     --with-php-config=%{_bindir}/php-config
@@ -161,6 +178,9 @@ cd ../ZTS
     --enable-redis \
     --enable-redis-session \
     --enable-redis-igbinary \
+%ifnarch ppc64
+    --enable-redis-msgpack \
+%endif
     --enable-redis-lzf \
     --with-liblzf \
     --with-php-config=%{_bindir}/zts-php-config
@@ -273,6 +293,9 @@ fi
 
 
 %changelog
+* Wed Aug 17 2019 Liam Sorsby <liam.sorsby@sky.com> - 5.0.2-1
+- Update to 5.0.2 (stable)
+
 * Wed Jun 12 2019 Carl George <carl@george.computer> - 4.3.0-3
 - Build require pear1's dependencies to avoid mismatched php stacks
 - Explicitly require php73-pecl-igbinary to avoid dependency problems
