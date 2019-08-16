@@ -22,7 +22,6 @@
 %else
 %global with_tests  0%{!?_without_tests:1}
 %endif
-%global json_ini    20-%{pecl_name}.ini
 # after 40-igbinary
 %global ini_name    50-%{pecl_name}.ini
 %global php         php73
@@ -105,12 +104,6 @@ cd ..
 # duplicate for ZTS build
 cp -pr NTS ZTS
 %endif
-
-# Drop in json configuration
-cat > %{json_ini} << 'EOF'
-; Enable json extension module
-extension = json.so
-EOF
 
 # Drop in the bit of configuration
 cat > %{ini_name} << 'EOF'
@@ -211,14 +204,17 @@ done
 
 %check
 # simple module load test
-%{__php} --no-php-ini \
-    --define extension=igbinary.so \
+DEPS="--no-php-ini  --define extension=json.so"
+DEPS="$DEPS --define extension=igbinary.so"
+%ifnarch ppc64
+    DEPS="$DEPS --define extension=msgpack.so"
+%endif
+%{__php} $DEPS \
     --define extension=%{buildroot}%{php_extdir}/%{pecl_name}.so \
     --modules | grep %{pecl_name}
 
 %if %{with_zts}
-%{__ztsphp} --no-php-ini \
-    --define extension=igbinary.so \
+%{__ztsphp} $DEPS \
     --define extension=%{buildroot}%{php_ztsextdir}/%{pecl_name}.so \
     --modules | grep %{pecl_name}
 %endif
@@ -243,8 +239,7 @@ sed -e "s/6379/$port/" -i *.php
 # Run the test Suite
 ret=0
 export TEST_PHP_EXECUTABLE=%{__php}
-export TEST_PHP_ARGS="--no-php-ini \
-    --define extension=igbinary.so \
+export TEST_PHP_ARGS="$DEPS \
     --define extension=%{buildroot}%{php_extdir}/%{pecl_name}.so"
 $TEST_PHP_EXECUTABLE $TEST_PHP_ARGS TestRedis.php || ret=1
 
