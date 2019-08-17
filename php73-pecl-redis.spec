@@ -35,7 +35,7 @@ License:       PHP
 URL:           https://pecl.php.net/package/%{pecl_name}
 
 BuildRequires: gcc
-BuildRequires: %{php}-devel
+BuildRequires: %{php}-devel > 7
 BuildRequires: %{php}-json
 # build require pear1's dependencies to avoid mismatched php stacks
 BuildRequires: pear1 %{php}-cli %{php}-common %{php}-xml
